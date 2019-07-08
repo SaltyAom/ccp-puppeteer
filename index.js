@@ -5,7 +5,7 @@ const fs = require("fs");
     const browser = await puppeteer.launch({ headless: false })
     const page = await browser.newPage()
 
-    await page.setDefaultNavigationTimeout(30 * 1000)
+    await page.setDefaultNavigationTimeout(60 * 1000)
 
     await page.goto('https://www.jobpub.com/searchjob', { waitUntil: "load" })
 
@@ -41,31 +41,31 @@ const fs = require("fs");
         });
 
         for(let user of users) {
-            try {
                 let userPage = await browser.newPage()
-                await userPage.setDefaultNavigationTimeout(15 * 1000)
+                await userPage.setDefaultNavigationTimeout(60 * 1000)
+                try {
+                    await userPage.goto(user)
 
-                await userPage.goto(user)
+                    await userPage.waitForSelector(".col-50r > b > font")
+                    let userName = await userPage.evaluate(() => {
+                        let name = document.querySelectorAll(".col-50r > b > font")[0].textContent
+                        return name
+                    })
 
-                await userPage.waitForSelector(".col-50r > b > font")
-                let userName = await userPage.evaluate(() => {
-                    let name = document.querySelectorAll(".col-50r > b > font")[0].textContent
-                    return name
-                })
+                    let tel = await userPage.evaluate(() => {
+                        let tel = document.querySelectorAll(".col-50r > font > font > a")[1].textContent
+                        return tel
+                    })
 
-                let tel = await userPage.evaluate(() => {
-                    let tel = document.querySelectorAll(".col-50r > font > font > a")[1].textContent
-                    return tel
-                })
+                    await fs.appendFileSync("result/result.txt", `${userName} \t${tel}\n`)
+                    console.log(`Written: ${userName}  ${tel}`)
 
-                await fs.appendFileSync("result/result.txt", `${userName} \t${tel}\n`)
-                console.log(`Written: ${userName}  ${tel}`)
-
-                await userPage.close()
-            } catch(err) {
-                console.log("Timeout, skip");
-                break;
-            }
+                    await userPage.close()
+                } catch(err) {
+                    console.log("Timeout, skip")
+                    userPage.close()
+                    break;
+                }
         }
         
         await page.evaluate(() => {
