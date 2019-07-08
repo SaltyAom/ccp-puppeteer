@@ -5,7 +5,7 @@ const fs = require("fs");
     const browser = await puppeteer.launch({ headless: false })
     const page = await browser.newPage()
 
-    await page.setDefaultNavigationTimeout(60 * 1000)
+    await page.setDefaultNavigationTimeout(3 * 60 * 1000)
 
     await page.goto('https://www.jobpub.com/searchjob', { waitUntil: "load" })
 
@@ -42,7 +42,7 @@ const fs = require("fs");
 
         for(let user of users) {
                 let userPage = await browser.newPage()
-                await userPage.setDefaultNavigationTimeout(60 * 1000)
+                await userPage.setDefaultNavigationTimeout(3 * 60 * 1000)
                 try {
                     await userPage.goto(user)
 
