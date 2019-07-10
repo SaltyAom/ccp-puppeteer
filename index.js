@@ -22,14 +22,14 @@ const fs = require("fs");
 　　　　　　　　|ﾚ! / ●　　 ﾘ ● ﾙ: : !: ┐ : : 　|
 　　　　　　　　|: Vl⊃　､_,､_,　⊂⊃::/ .」|: : :}
 ￣￣￣￣￣￣￣'ー―＝-―一’￣￣￣￣￣￣￣￣￣
-　　　　∬　　　＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿
+　　　　∬　　　＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿
 　　　　旦　　（＿＿＿＿＿＿＿＿＿＿(＿＿＿   ＿＿＿（ﾉ
  　　　　　　 　 　　　　　　　　　　　  　＼＼
 　　　　　　　　　　　　　　　　　　　    　 ￣
     `)
     console.log("\x1b[0m");
 
-    console.log("\x1b[32m\x1b[1m", "\tStarting...")
+    console.log("\x1b[32m\x1b[1m", "\tStarting...\n\n")
     console.log("\x1b[0m");
 
     fs.readFile("result/result.txt", async (err, buf) => {
@@ -77,7 +77,6 @@ const fs = require("fs");
 
             for(let user of users) {
                 index = index + 1;
-                await delay(15 * 1000)
 
                 let userPage = await browser.newPage()
                 await userPage.setJavaScriptEnabled( false )
@@ -87,6 +86,9 @@ const fs = require("fs");
                     await userPage.goto(user)
 
                     await userPage.waitForSelector(".col-50r > b > font", { timeout: 3 * 60 * 1000, visible: true })
+
+                    await delay(15 * 1000)
+
                     let userName = await userPage.evaluate(() => {
                         let name = document.querySelectorAll(".col-50r > b > font")[0].textContent
                         return name
@@ -102,6 +104,8 @@ const fs = require("fs");
 
                     await userPage.close()
                 } catch(err) {
+                    await delay(15 * 1000)
+
                     console.log("Timeout, skip")
 
                     await userPage.close()
@@ -110,8 +114,10 @@ const fs = require("fs");
             }
             
             await page.evaluate(() => {
+                console.log("\x1b[1m","\t\n New page: \t")
                 let nextPageButton = document.querySelectorAll("td > table > tbody > tr > td > a")
                 nextPageButton[nextPageButton.length - 1].click();
+                delay(5000);
             })
         }
     });
