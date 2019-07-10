@@ -57,12 +57,17 @@ const fs = require("fs");
         await page.select("select[name='Edu_To']", "5");
         await page.$eval("form[name='myForm']", form => form.submit())
 
-        console.log("Reading data...")
+        let startTime = new Date().toLocaleTimeString();
+
+        console.log("\x1b[1m\x1b[32m", "| Starting evalution...\n")
+        console.log("\x1b[1m\x1b[4m\x1b[36m", `| Started at: ${startTime}\n\n`)
+        console.log("\x1b[0m");
         delay(1000)
 
         let index = 0;
 
         for(;;){
+            await delay(5000);
             await page.waitForSelector("a.resume", { timeout: 3 * 60 * 1000, visible: true })
 
             let users = await page.evaluate((resultData) => {
@@ -100,7 +105,7 @@ const fs = require("fs");
                     })
 
                     await fs.appendFileSync("result/result.txt", `${userName} \t${tel}\n`)
-                    console.log(`${index}) Written: ${userName}  ${tel}`)
+                    console.log(`${index}) ${userName}  ${tel}`)
 
                     await userPage.close()
                 } catch(err) {
@@ -117,7 +122,6 @@ const fs = require("fs");
                 console.log("\x1b[1m","\t\n New page: \t")
                 let nextPageButton = document.querySelectorAll("td > table > tbody > tr > td > a")
                 nextPageButton[nextPageButton.length - 1].click();
-                delay(5000);
             })
         }
     });
