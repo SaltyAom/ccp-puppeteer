@@ -2,7 +2,10 @@ const puppeteer = require('puppeteer');
 const fs = require("fs");
 
 (async () => {
-    const browser = await puppeteer.launch({ headless: true })
+    const browser = await puppeteer.launch({ 
+        headless: true,
+        timeout: 0
+    })
     const page = await browser.newPage()
 
     const delay = (time) => {
@@ -66,7 +69,7 @@ const fs = require("fs");
 
         let index = 0;
 
-        for(;;){
+        while(){
             await delay(5000);
             await page.waitForSelector("a.resume", { timeout: 3 * 60 * 1000, visible: true })
 
@@ -90,7 +93,9 @@ const fs = require("fs");
                 try {
                     await userPage.goto(user)
 
-                    await userPage.waitForSelector(".col-50r > b > font", { timeout: 3 * 60 * 1000, visible: true })
+                    await userPage.waitForSelector(".col-50r > b > font", { timeout: 3 * 60 * 1000, visible: true }).catch((err) => {
+                        console.log("Selector Timeout, skip")
+                    });
 
                     await delay(15 * 1000)
 
